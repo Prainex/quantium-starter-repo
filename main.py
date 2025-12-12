@@ -1,5 +1,8 @@
 import pandas as pd
+from dash import Dash, html, dcc
+import plotly.express as px
 
+# Combine and process sales data
 combined_data = []
 
 for i in range(0, 3):
@@ -23,3 +26,27 @@ overall_data = pd.concat(combined_data)
 
 # Save to a new CSV file
 overall_data.to_csv("data/combined_sales_data.csv", index=False)
+
+# Dash app for visualizing sales data
+app = Dash()
+
+# Load the combined data produced earlier
+df = pd.read_csv("data/combined_sales_data.csv")
+
+# Build the figure
+fig = px.line(
+    df,
+    x='date',
+    y='sales',
+    title='Pink Morsel Sales Over Time',
+    labels={'date': 'Date', 'sales': 'Sales ($)'}
+)
+
+# Dash layout: header + chart
+app.layout = html.Div([
+    html.H1('Soul Foods — Pink Morsel Sales Visualiser'),
+    dcc.Graph(figure=fig)
+])
+
+if __name__ == "__main__":
+    app.run(debug=True)
